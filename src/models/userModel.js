@@ -19,6 +19,14 @@ const User = connection.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  resetToken: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  resetTokenExpiration: {
+    type: DataTypes.DATE,
+    defaultValue: null,
+  },
 });
 
 User.beforeCreate(async (user) => {
