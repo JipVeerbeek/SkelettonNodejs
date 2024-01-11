@@ -1,7 +1,8 @@
-import { DataTypes } from 'sequelize';
-import connection from '../config/db.js';
+import { DataTypes } from "sequelize";
+import bcrypt from "bcrypt";
+import connection from "../config/db.js";
 
-const user = connection.define('User', {
+const User = connection.define("User", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,4 +21,15 @@ const user = connection.define('User', {
   },
 });
 
-export default user;
+User.beforeCreate(async (user) => {
+  const saltRounds = 10;
+  if (user.changed("password")) {
+    user.password = await bcrypt.hash(user.password, saltRounds);
+  }
+});
+
+User.prototype.isValidPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+export default User;
